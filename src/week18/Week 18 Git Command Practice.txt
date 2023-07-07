@@ -1,0 +1,260 @@
+Office Hours Topics:
+
+    Git with commands
+
+    [T]  -> any step with this indicator should be done on the terminal
+
+----------------------------------------------------------------------------------------
+
+Scenario: New project
+    You are creating a new project and setting up the git yourself
+
+    Open IntelliJ
+    Create a new project
+    Open the built in terminal
+    [T] create a local repository at the project level
+            git init
+    create a gitignore
+
+        -> for steps like creating a file, java class, etc
+        things you would do in your normal work in an iDE can be done manually. They don't need to be done through the terminal also
+        focus on git
+
+    [T] stage the gitignore
+            git add .
+    [T] commit the gitignore
+            git commit -m ""
+
+    create a package (tests)
+    create a class (TestCase05)
+    make some changes in the class
+    [T] navigate to the src
+            cd src
+
+    [T] stage and commit changes
+            git add .
+            git commit -m ""
+
+        -> note: your location doesn't matter if you use git add . to stage all
+
+    create another class (ie: TestCase06)
+    make some changes in the class
+    [T] navigate to the package (not src)
+            cd package
+    [T] stage and commit changes
+            -> in this step DON'T USE git add . but instead stage the specific file
+            git add file
+
+    go to GitHub
+    create a new repository
+    copy the link
+    [T] define the remote
+            git remote add origin url
+
+    [T] Push and set upstream branch
+            git push -u origin master
+
+    Refresh the GitHub page
+
+----------------------------------------------------------------------------------------
+
+Scenario: Branching upstream
+    Here we will practice using branch locally and pushing to remote branches
+
+    [T] check which branch you are on
+            git branch
+    [T] create the develop branch
+            git branch develop
+    [T] checkout to the new develop branch
+            git checkout develop
+    [T] create the develop branch on the remote
+            you can manually do it or:
+            git push -u origin develop
+    [T] create a new feature branch
+            git branch feature-a
+    [T] checkout to the new feature-a branch
+            git checkout feature-a
+
+    create a new package (utils)
+    create a new file (ReportUtil)
+    make changes in the file
+
+    [T] navigate to the new package
+            cd ..
+            cd utils
+    [T] stage and commit changes
+            git add ReportUtil.java
+            git commit -m "add ReportUtil.java"
+
+    [T] push and create new upstream branch
+            git push -u origin feature-a
+
+    go to GitHub
+    create a pull request and merge from feature-a to develop
+
+----------------------------------------------------------------------------------------
+
+Scenario: Branching downstream
+    Here we will practice updating our local branches with changes on the remote. Updating our project before making changes
+
+    [Simulate team collaboration or actually do practice with someone else following the same steps]
+    go to GitHub
+    make sure you are on the develop branch
+    go to one of the packages
+    edit a file directly on GitHub and commit changes
+
+    go to IntelliJ
+    [T] fetch to see if there is any changes
+            git fetch
+    [T] check which branch you are on
+            git branch
+    [T] checkout to the develop branch
+            git checkout develop
+
+    [T] check the log
+            git log -> this by itself will check the local develop branch log
+            git log origin/develop -> this will check the log of the origin develop branch
+
+            to exit the log press: q
+
+            Possible issue: [fatal: Unable to read current working directory: No such file or directory]
+
+            If you are following all the scenarios in order we would have been in utils package location in the terminal, but the develop package does not have this package, so to fix it go back to the src
+
+                cd ..
+
+    [T] update the local develop
+            git pull -> we can use just pull here because we have already set the upstream branch in  [Scenario: Branching upstream]
+
+            otherwise use: git pull origin develop
+
+    [T] merge the changes into the feature branch that you will make changes in
+            git checkout feature-a
+            git merge develop
+
+     At this point your local project is up to date, so you would be able to make changes and push
+
+----------------------------------------------------------------------------------------
+
+Scenario: Cloning
+    Here we will practice cloning a project, opening it in IntelliJ, and getting is set up to use
+
+    * It will be easier to go through this scenario if you have already gone through the previous scenarios
+
+    on Github go to the remote repository
+    copy the link [green code button -> https link]
+    open the command line tool on your system
+
+    [T] check your location
+    [T] navigate to the ideaprojects folder - this folder is under your user by default. If you have trouble finding this folder you can do it anywhere (desktop)
+            /users -> cd saim
+            /users/saim -> cd ideaprojects
+            /users/saim/ideaprojects
+
+    [T] make a folder
+            mkdir folder
+    [T] Navigate into that folder
+            cd folder
+
+                -> we could have just cloned without making this extra folder, but if folder already exists (has the same folder name there will be a problem). This extra folder just allows us to clone without issue
+
+    [T] Clone after double checking the location (/users/saim/ideaprojects/folder)
+            git clone link
+
+                -> if it asks for a username, then given your github username
+                -> if it asks for your password, then give a valid TOKEN
+
+    open IntelliJ
+    open the project we just cloned
+    open the built in terminal
+
+    [T] create a local develop branch
+            git branch develop
+    [T] set the upstream branch to the origin develop
+            git branch -u origin/branch
+    [T] update our local develop branch
+            git pull
+
+    we have a cloned project and proper updated branch. We can now follow the same work flow by making separate branches, committing, and pushing
+
+----------------------------------------------------------------------------------------
+
+Scenario: un-stage a file & undo a commit
+
+    here we will practice how to remove a file from staging so it does not get commit. Then we will also undo a commit
+
+    -> to work on this scenario be on an up to date develop branch
+    -> [T] also be at the src location in the project
+
+    [T] create a new branch (feat-btn)
+            git branch feat-btn
+    [T] checkout to the new branch
+            git checkout feat-btn
+
+    create a new file with random changes
+    create another new file with random changes
+
+    [T] stage both files
+            un-stage the second file
+
+            git restore --staged file
+
+    [T] commit the first file that is still staged
+            git commit -m ""
+
+    [T] open the log
+            git log
+    copy the commit address to the commit you want to go back to (a hash of numbers and letters)
+            git reset address
+
+            -> if you wanted to also delete the changes you could use
+                git reset --hard address
+
+    if you went through both part of the scenario you should be left with two new files that are not staged or commit
+        check with
+            git status
+
+----------------------------------------------------------------------------------------
+
+Scenario: Rebase
+
+    Lets practice how to rebase when someone on our team updating the project while we were also working. Before we can push our changes we need to make sure our project is up to date
+
+    -> to work on this scenario be on an up to date develop branch
+    -> [T] also be at the src location in the project
+
+    [T] create a new branch (feat-z)
+            git branch feat-z
+    [T] checkout to the new branch
+            git checkout feat-z
+    create a new file with random changes
+    [T] stage and commit the file
+            git add file
+            git commit -m ""
+
+    [Now you can either simulate someone made a change on GitHub to practice yourself, or even better, work with some others from your groups to go through the flow. Either way we will now have new changes on the develop branch]
+
+    In this case we are practicing by ourselves so go to GitHub and update one of the file (on the develop branch)
+
+    [T] before pushing our new changes lets make sure our project is up to date
+            git fetch
+
+    [T] we should notice there was some changes on the develop branch so update our local develop
+            git checkout develop
+            git pull
+
+                or git pull origin develop
+
+    [T] now that our develop branch is up to date we need to make sure our branch is up to date too, so we will rebase
+            git checkout feat-z
+            git rebase develop
+
+                -> this will take our changes and add them on top of the changes from the develop branch
+
+    [T] finish copy pushing
+            git push -u origin feat-z
+
+    We have now finished sharing our changes while also making sure our project was up to date
+
+----------------------------------------------------------------------------------------
+
